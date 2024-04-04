@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -115,89 +116,108 @@ for(int[] li: list){
  */
 
 System.out.println("shops " +Arrays.toString(shops)   );
- ArrayList<Integer[]> cost = new ArrayList<>();
- for(int i: clients){
+System.out.println("client " +Arrays.toString(clients)   );
+
+
+ArrayList<Integer[]> S_2_C = new ArrayList<>();//shops to Clients
+ArrayList<Integer[]> C_2_S= new ArrayList<>();
+
+
+for (int i: shops){
         graph.dijkstra(String.valueOf(i));
+        S_2_C.add(graph.printer(String.valueOf(clients[0])));
+}
+System.out.println("Shop to Client");
+for (Integer[] i : S_2_C){
+        System.out.println(Arrays.toString(i));
+}
 
-        for (int j : shops){
-                cost.add(graph.printer(String.valueOf(j)));
-                //System.out.println(graph.printer(String.valueOf(j)));
-              
-
-        }
-        
-
- }
-
-for (Integer[] i : cost){
+graph.dijkstra(String.valueOf(clients[0]));
+for (int j: shops){
+   C_2_S.add(graph.printer(String.valueOf(j)));
+}
+System.out.println("Client to Shop");
+for (Integer[] i : C_2_S){
         System.out.println(Arrays.toString(i));
 }
 
 
 
+// now we want to add these 2 arrays in such a way that we have this will give
+//this gives the least cost pair between the arrays of 
+ArrayList<Integer[]> leastCostPair = new ArrayList<>();
+Integer[] gap = {0};//this will be used when we have the
+leastCostPair = (ArrayList<Integer[]>) findLeastCostPairs(S_2_C, C_2_S);
+
+
+
+
+System.out.println("\n \n Least Cost pairs \n\n");
+for (Integer[] i : leastCostPair){
+        System.out.println(Arrays.toString(i));
+}
+
+int finalClient =0;
+int  finalTaxi =0;
+int finalShop =0;
+ArrayList<Integer> taxiRoute = new ArrayList<>();
+
+if(leastCostPair.size()==2){
+        Integer[] shopToClient = leastCostPair.get(0);
+        Integer[] clientToShop = leastCostPair.get(1);
+        taxiRoute.add(shopToClient[1]);
+        taxiRoute.add(clientToShop[1]);
+
+        finalClient  = shopToClient[2];
+        finalTaxi =shopToClient[1];
+        finalClient = clientToShop[1];
+
+
+
+}
+
+
+
+System.out.println("client " + finalClient +"\ntaxi " + "\n" +  taxiRoute.get(0) + " " + taxiRoute.get(1) + "\nshop\n"+ finalShop);
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  int identifier  = 0;//used to track the input of the # of nodes 
-//  numNodes = list.get(0)[0]; //since this will always be at the beginning of the input
-//  for (int i = 1; i<list.size(); i++){
-//           int[] a = list.get(i);
-//           if (a.length==1 && identifier==0){
-//                     numShops = a[0];
-//                     identifier++;
-
-//           }else if(a.length==1 && identifier==2){
-//                   numClients = a[0];
-//                   identifier++;
-
-//           }else if(identifier==0){
-//                     int len = a.length;
-//                     for (int j =0;j<len;j+=2){
-//                               //add edges to the graph
-//                               graph.addEdge(String.valueOf(a[0]),String.valueOf(a[j+1]), a[j+2]);
-//                     }
-//           }else if (identifier==1){
-//                     //Assign nodes that are that are shops 
-//                     shopNodes = a;
-                  
-
-//           }else if(identifier==2){
-//                     //assign the nodes that are clients
-//                     clientNodes = a;
-//           }
-
-//  }
-
-
-/**
- * The next step is taking the array of the client nodes and  and for each of the client find out 
- * What taxi(shopNode) passes through the client and going somewhere has the least cost
- * For now i think we could utilise a a looping mechanism whereby
- * 
- */
        
         
           
  }
-       
+ 
+    public static List<Integer[]> findLeastCostPairs(List<Integer[]> S_2_C, List<Integer[]> C_2_S) {
+        int minCost = Integer.MAX_VALUE;
+        List<Integer[]> leastCostPairs = new ArrayList<>();
 
-        
+        for (Integer[] i : S_2_C) {
+            for (Integer[] j : C_2_S) {
+                int currentCost = i[0] + j[0];
+                if (currentCost < minCost) {
+                    minCost = currentCost;
+                    leastCostPairs.clear(); // Clear the list since we found a smaller sum
+                    leastCostPairs.add(i);
+                    leastCostPairs.add(j);
+                }else if(currentCost == minCost){
+                        Integer[] a = {0};//seperator to show that we have mkore than one possible path
+                        leastCostPairs.add(a);
+                        leastCostPairs.add(i);
+                        leastCostPairs.add(j);
+
+                }
+            }
+        }
+        return leastCostPairs;
+    }
+
+
+
+}
+       
 
         
 
@@ -208,4 +228,3 @@ for (Integer[] i : cost){
 
          
 
-}
