@@ -15,11 +15,11 @@ import java.util.List;
 
 
     /***** */
-    public String getShop_client() {
+    public String getShop_Client() {
         return soc;
     }
 
-    public void setShop_client(String soc) {
+    public void setShop_Client(String soc) {
         this.soc = soc;
     }
    /********** */

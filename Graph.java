@@ -7,6 +7,7 @@ package Graphs;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Queue;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class Graph
      * destNode after a shortest path algorithm has run.
      */
     public void printPath( String destName )
-    {
+    {   
         Vertex w = vertexMap.get( destName );
         if( w == null )
             throw new NoSuchElementException( "Destination vertex not found" );
@@ -114,10 +115,95 @@ public class Graph
         else
         {
             System.out.print( "(Cost is: " + w.dist + ") " );
+
             printPath( w );
             System.out.println( );
         }
     }
+
+  /**
+     * Print shortest path to destination node.
+     * Returns an ArrayList containing the cost, start node, and destination node.
+     * Method returns cost , startNode , *passthroughNodes , destNode
+     */
+    public Integer[] printer(String destName) {
+        Vertex w = vertexMap.get(destName);
+        if (w == null)
+            throw new NoSuchElementException("Destination vertex not found");
+        else if (w.dist == INFINITY)
+            return null; // Destination is unreachable
+
+        ArrayList<Integer> pathInfoList = new ArrayList<>();
+        pathInfoList.add((int) w.dist); // Add cost to the path as Integer
+        buildPathInfo(w, pathInfoList); // Build path information
+
+        return pathInfoList.toArray(new Integer[0]);
+    }
+
+    // Helper method to recursively build path information
+    private void buildPathInfo(Vertex dest, ArrayList<Integer> pathInfoList) {
+        if (dest.prev != null) {
+            buildPathInfo(dest.prev, pathInfoList);
+        }
+        pathInfoList.add(Integer.parseInt(dest.name)); // Add vertex name as Integer
+    }
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * If vertexName is not present, add it to vertexMap.
@@ -142,13 +228,24 @@ public class Graph
     private void printPath( Vertex dest )
     {
         if( dest.prev != null )
-        {
+        {  
             printPath( dest.prev );
             System.out.print( " to " );
         }
         System.out.print( dest.name );
     }
-    
+    /******** */
+    // ArrayList<Integer[]> list = new ArrayList<>();
+    // private int[] out(String vertexName){
+       
+    //     int[] i = new int[3];
+    //     Vertex v = vertexMap.get(vertexName);
+
+
+
+    //     return null;
+    // }
+    /******************* */
     /**
      * Initializes the vertex output info prior to running
      * any shortest path algorithm.
@@ -378,7 +475,7 @@ public class Graph
         try
         {   	
             //FileReader fin = new FileReader(args[0]);
-        	FileReader fin = new FileReader("Graph1.txt");
+        	FileReader fin = new FileReader("Graph.txt");
             Scanner graphFile = new Scanner( fin );
 
             // Read the edges and insert

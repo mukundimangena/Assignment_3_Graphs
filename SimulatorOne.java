@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import Graph.java;
 import Graphs.Graph;
@@ -62,8 +63,8 @@ public class SimulatorOne{
 
 System.out.println(Arrays.deepToString(list.toArray()));
 int id =0;
-int[] shops;
-int[] clients;
+int[] shops = new int[0];
+int[] clients = new int[0];
 
 
 for(int[] li: list){
@@ -86,7 +87,7 @@ for(int[] li: list){
                 numShops = li.length;
                 shops = li;
                 for (int i : li){
-                      graph.getVertex(String.valueOf(i)).setShop_client("shop");
+                      graph.getVertex(String.valueOf(i)).setShop_Client(" shop");
                       System.out.println("Set node " + i + " as shop " );
                 }
 
@@ -95,7 +96,7 @@ for(int[] li: list){
                 
                 
                 for(int i:li){
-                        graph.getVertex(String.valueOf(i)).setShop_client("client");
+                        graph.getVertex(String.valueOf(i)).setShop_Client(" client");
                         System.out.println("Set node " + i + " as client " );
                 }
         }
@@ -108,8 +109,29 @@ for(int[] li: list){
  * 1-> we could calculate the dijkstra from the client node to the shop and save the least cost path with the shop number 
  * 2-> we will then calculate the least cost path from the client to the shops 
  * 3-> 
+ * NB :: The results for a client (at a given node) consist of details of the lowest cost pick up (shortest
+*path from a taxi to the client), and then details of the lowest cost drop off (shortest path from the
+*client to a shop). therefore we must find the taxi with 
  */
 
+System.out.println("shops " +Arrays.toString(shops)   );
+ ArrayList<Integer[]> cost = new ArrayList<>();
+ for(int i: clients){
+        graph.dijkstra(String.valueOf(i));
+
+        for (int j : shops){
+                cost.add(graph.printer(String.valueOf(j)));
+                //System.out.println(graph.printer(String.valueOf(j)));
+              
+
+        }
+        
+
+ }
+
+for (Integer[] i : cost){
+        System.out.println(Arrays.toString(i));
+}
 
 
 
