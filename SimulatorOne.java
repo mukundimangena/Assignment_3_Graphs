@@ -95,38 +95,11 @@ for(int[] li: list){
 }
 
 
-//at this point the graph is full
-/**
- * Need to figure out a way to get the distances from the shops clients in the array clients
- * 1-> we could calculate the dijkstra from the client node to the shop and save the least cost path with the shop number 
- * 2-> we will then calculate the least cost path from the client to the shops 
- * 3-> 
- * NB :: The results for a client (at a given node) consist of details of the lowest cost pick up (shortest
-*path from a taxi to the client), and then details of the lowest cost drop off (shortest path from the
-*client to a shop). therefore we must find the taxi with 
- */
+ 
+output(shops, clients, graph);
 
 
 
-
-ArrayList<Integer[]> S_2_C = new ArrayList<>();//shops to Clients
-ArrayList<Integer[]> C_2_S= new ArrayList<>();
-
-/**
- * create a method that takes in the the array of the shops and the client 
- * they are going to and finds the dijkstra and returns an arraylist of those values
- */
-S_2_C = ShopToClientDjikstra(shops,clients[0], graph);
-C_2_S = ClientToShopDjikstra(clients[0], shops, graph);
-
-
-
-// now we want to add these 2 arrays in such a way that we have this will give
-//this gives the least cost pair between the arrays of 
-ArrayList<Integer[]> leastCostPair = new ArrayList<>();
-
-leastCostPair = (ArrayList<Integer[]>) findLeastCostPairs(S_2_C, C_2_S);
-System.out.println(printOutResults(leastCostPair));
 
      
           
@@ -223,11 +196,12 @@ System.out.println(printOutResults(leastCostPair));
                 taxi.append(j).append(" ");
 
               }
+              taxi.append("\n");
            
         }
         for(int i:Arrays.copyOfRange(leastcost.get(1),1, leastcost.get(1).length) ){shop += i +" ";}
 
-          output = "client " + client +"\n" + taxi+"\n"+ "shop "+shopval+"\n"+shop ;
+          output = "client " + client +"\n" + taxi+ "shop "+shopval+"\n"+shop ;
        }
 
 
@@ -235,59 +209,55 @@ System.out.println(printOutResults(leastCostPair));
     }
 
 
-//     public static String printfor2(Integer[] shop2Client, Integer[] client2Shop){
-//         Integer[] shopToClient = shop2Client;
-//         Integer[] clientToShop = client2Shop ;
+    public static String printfor2(Integer[] shop2Client, Integer[] client2Shop){
+        Integer[] shopToClient = shop2Client;
+        Integer[] clientToShop = client2Shop ;
 
-//         Integer client = shopToClient[shopToClient.length-1];
-//         Integer taxi = shopToClient[1];
-//         Integer shop = clientToShop[shopToClient.length-1];
-//         Integer[] taxiroutetoClient = Arrays.copyOfRange(shopToClient,1 , shopToClient.length);
-//         Integer[] taxiRouteToShop = Arrays.copyOfRange(clientToShop, 1, clientToShop.length);
+        Integer client = shopToClient[shopToClient.length-1];
+        Integer taxi = shopToClient[1];
+        Integer shop = clientToShop[shopToClient.length-1];
+        Integer[] taxiroutetoClient = Arrays.copyOfRange(shopToClient,1 , shopToClient.length);
+        Integer[] taxiRouteToShop = Arrays.copyOfRange(clientToShop, 1, clientToShop.length);
 
-//         String taxiRouteString="";
-//         String clientRouteString ="";
-//         for(Integer i: taxiroutetoClient){
-//                 taxiRouteString += String.valueOf(i)+ " ";
-//         }
-//         for(Integer i: taxiRouteToShop){
-//                 clientRouteString += String.valueOf(i)+ " ";
-//         }
-
- 
-//              return  "client " + client +"\n"+ "taxi "+ taxi + "\n"+ taxiRouteString +"\n"+ "shop " + shop + "\n" + clientRouteString;
-        
-//     }
-
-
-//     public static String output(int shops, int clients){
-        
-// ArrayList<Integer[]> S_2_C = new ArrayList<>();//shops to Clients
-// ArrayList<Integer[]> C_2_S= new ArrayList<>();
-
-// for (int i : clients){
-//         S_2_C = ShopToClientDjikstra(shops,clients[0], graph);
-//         C_2_S = ClientToShopDjikstra(clients[0], shops, graph);
-            
-// }
+        String taxiRouteString="";
+        String clientRouteString ="";
+        for(Integer i: taxiroutetoClient){
+                taxiRouteString += String.valueOf(i)+ " ";
+        }
+        for(Integer i: taxiRouteToShop){
+                clientRouteString += String.valueOf(i)+ " ";
+        }
 
  
-// S_2_C = ShopToClientDjikstra(shops,clients[0], graph);
-// C_2_S = ClientToShopDjikstra(clients[0], shops, graph);
+             return  "client " + client +"\n"+ "taxi "+ taxi + "\n"+ taxiRouteString +"\n"+ "shop " + shop + "\n" + clientRouteString;
+        
+    }
+
+
+ public static void output(int[] shops, int[] clients,Graph graph){
+        
+ArrayList<Integer[]> S_2_C = new ArrayList<>();//shops to Clients
+ArrayList<Integer[]> C_2_S= new ArrayList<>();
+
+for (int i : clients){
+        S_2_C = ShopToClientDjikstra(shops,i, graph);
+        C_2_S = ClientToShopDjikstra(i, shops, graph);
+        
+        ArrayList<Integer[]> leastCostPair = new ArrayList<>();
+
+        leastCostPair = (ArrayList<Integer[]>) findLeastCostPairs(S_2_C, C_2_S);
+        System.out.println(printOutResults(leastCostPair));
+        S_2_C.clear();
+        C_2_S.clear();
+        leastCostPair.clear();
+}
 
 
 
 
-// ArrayList<Integer[]> leastCostPair = new ArrayList<>();
 
-// leastCostPair = (ArrayList<Integer[]>) findLeastCostPairs(S_2_C, C_2_S);
-// System.out.println(printOutResults(leastCostPair));
-
-
-
-
-//         return "";
-//     }
+        
+    }
 }
        
 
