@@ -7,9 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
-
-import Graph.java;
-import Graphs.Graph;
 /**
  * This class should handle the input of data from system.in 
  * <number of nodes><newline>
@@ -26,10 +23,12 @@ public class SimulatorOne{
 
 
  public static void main(String[] args) {
-           
+             
         int numNodes;
         int numShops, numClients; 
        
+         int[] abs = {1,2,3,4,5,6};
+         System.out.println(abs[abs.length-1]);
 
         Graph graph = new Graph();
        
@@ -55,14 +54,6 @@ public class SimulatorOne{
 }
 
 
-/**
- * at this point list contains a list of arrays of the input
- * every time we have a single entry we change the type of input
- * we need to loop through the list array assigning the number of Nodes and vertices 
- * CREATE THE REQUIRED GRAPH
- */
-
-System.out.println(Arrays.deepToString(list.toArray()));
 int id =0;
 int[] shops = new int[0];
 int[] clients = new int[0];
@@ -82,14 +73,14 @@ for(int[] li: list){
         }else if( id==1 && li.length>1){
                 for(int i = 0;i<li.length-1; i+=2){
                 graph.addEdge(String.valueOf(li[0]), String.valueOf(li[i+1]), li[i+2]);
-                System.out.println("Added " +li[i+1] + " " + li[i+2]);
+              
         }
         }else if (id==2 && li.length >= 1){
                 numShops = li.length;
                 shops = li;
                 for (int i : li){
                       graph.getVertex(String.valueOf(i)).setShop_Client(" shop");
-                      System.out.println("Set node " + i + " as shop " );
+                     
                 }
 
         }else if(id==3 && li.length>=1){
@@ -98,7 +89,7 @@ for(int[] li: list){
                 
                 for(int i:li){
                         graph.getVertex(String.valueOf(i)).setShop_Client(" client");
-                        System.out.println("Set node " + i + " as client " );
+                     
                 }
         }
 }
@@ -115,80 +106,38 @@ for(int[] li: list){
 *client to a shop). therefore we must find the taxi with 
  */
 
-System.out.println("shops " +Arrays.toString(shops)   );
-System.out.println("client " +Arrays.toString(clients)   );
+
 
 
 ArrayList<Integer[]> S_2_C = new ArrayList<>();//shops to Clients
 ArrayList<Integer[]> C_2_S= new ArrayList<>();
 
-
-for (int i: shops){
-        graph.dijkstra(String.valueOf(i));
-        S_2_C.add(graph.printer(String.valueOf(clients[0])));
-}
-System.out.println("Shop to Client");
-for (Integer[] i : S_2_C){
-        System.out.println(Arrays.toString(i));
-}
-
-graph.dijkstra(String.valueOf(clients[0]));
-for (int j: shops){
-   C_2_S.add(graph.printer(String.valueOf(j)));
-}
-System.out.println("Client to Shop");
-for (Integer[] i : C_2_S){
-        System.out.println(Arrays.toString(i));
-}
+/**
+ * create a method that takes in the the array of the shops and the client 
+ * they are going to and finds the dijkstra and returns an arraylist of those values
+ */
+S_2_C = ShopToClientDjikstra(shops,clients[0], graph);
+C_2_S = ClientToShopDjikstra(clients[0], shops, graph);
 
 
 
 // now we want to add these 2 arrays in such a way that we have this will give
 //this gives the least cost pair between the arrays of 
 ArrayList<Integer[]> leastCostPair = new ArrayList<>();
-Integer[] gap = {0};//this will be used when we have the
+
 leastCostPair = (ArrayList<Integer[]>) findLeastCostPairs(S_2_C, C_2_S);
+System.out.println(printOutResults(leastCostPair));
 
-
-
-
-System.out.println("\n \n Least Cost pairs \n\n");
-for (Integer[] i : leastCostPair){
-        System.out.println(Arrays.toString(i));
-}
-
-int finalClient =0;
-int  finalTaxi =0;
-int finalShop =0;
-ArrayList<Integer> taxiRoute = new ArrayList<>();
-
-if(leastCostPair.size()==2){
-        Integer[] shopToClient = leastCostPair.get(0);
-        Integer[] clientToShop = leastCostPair.get(1);
-        taxiRoute.add(shopToClient[1]);
-        taxiRoute.add(clientToShop[1]);
-
-        finalClient  = shopToClient[2];
-        finalTaxi =shopToClient[1];
-        finalClient = clientToShop[1];
-
-
-
-}
-
-
-
-System.out.println("client " + finalClient +"\ntaxi " + "\n" +  taxiRoute.get(0) + " " + taxiRoute.get(1) + "\nshop\n"+ finalShop);
-
-
-
-
-
-
-       
-        
+     
           
  }
+ /**
+  * find the least cost pair return as 2 arrays with the distances and nodes they pass through to get to 
+  *the final
+  * @param S_2_C 
+  * @param C_2_S
+  * @return
+  */
  
     public static List<Integer[]> findLeastCostPairs(List<Integer[]> S_2_C, List<Integer[]> C_2_S) {
         int minCost = Integer.MAX_VALUE;
@@ -214,8 +163,131 @@ System.out.println("client " + finalClient +"\ntaxi " + "\n" +  taxiRoute.get(0)
         return leastCostPairs;
     }
 
+ /**
+  * Takes an Array of shops , the client they are going to and the graph
+  *it will return arrays of the least cost paths with distances 
+  *Output Array {distance , startShopNode, *path,destinationNode}
+  */
+    public static ArrayList<Integer[]> ShopToClientDjikstra(int[] shops, int client, Graph graph){
+        ArrayList<Integer[]> list = new ArrayList<>();
+        for(int i : shops){
+           
+                graph.dijkstra(String.valueOf(i));
+                list.add(graph.printer(String.valueOf(client)));
+        }
 
 
+        return list;
+
+    }
+
+    /**
+     * 
+     * @param client
+     * @param shops
+     * @param graph
+     * @return
+     */
+    public static ArrayList<Integer[]> ClientToShopDjikstra(int client, int[] shops, Graph graph){
+        ArrayList<Integer[]> list = new ArrayList<>();
+        graph.dijkstra(String.valueOf(client));
+        for(int i: shops){
+                list.add(graph.printer(String.valueOf(i)));
+                
+        }
+
+
+
+        return list;
+    }
+//Maybe actually add the least costs path array to the print results 
+
+//the Multiple costs will be achieved by checking the size of the least costs if its grater than 2 it means we have mutiple paths 
+    public static String printOutResults(ArrayList<Integer[]> leastcost){
+        String output = "";
+      
+       if (leastcost.size()==2){
+       output = printfor2(leastcost.get(0),leastcost.get(1) );
+
+       }else {
+        String client = String.valueOf(leastcost.get(0)[leastcost.get(0).length-1]);
+        String shopval = String.valueOf(leastcost.get(1)[leastcost.get(1).length-1]);
+        StringBuilder taxi = new StringBuilder();
+        String shop ="";
+
+        for (int i = 0; i<leastcost.size();i+=3){
+            
+              Integer[] shop2C = Arrays.copyOfRange(leastcost.get(i), 1, leastcost.get(i).length);
+              taxi.append("taxi ").append(shop2C[0]).append("\n");
+              for(Integer j: shop2C){
+                taxi.append(j).append(" ");
+
+              }
+           
+        }
+        for(int i:Arrays.copyOfRange(leastcost.get(1),1, leastcost.get(1).length) ){shop += i +" ";}
+
+          output = "client " + client +"\n" + taxi+"\n"+ "shop "+shopval+"\n"+shop ;
+       }
+
+
+        return output;
+    }
+
+
+//     public static String printfor2(Integer[] shop2Client, Integer[] client2Shop){
+//         Integer[] shopToClient = shop2Client;
+//         Integer[] clientToShop = client2Shop ;
+
+//         Integer client = shopToClient[shopToClient.length-1];
+//         Integer taxi = shopToClient[1];
+//         Integer shop = clientToShop[shopToClient.length-1];
+//         Integer[] taxiroutetoClient = Arrays.copyOfRange(shopToClient,1 , shopToClient.length);
+//         Integer[] taxiRouteToShop = Arrays.copyOfRange(clientToShop, 1, clientToShop.length);
+
+//         String taxiRouteString="";
+//         String clientRouteString ="";
+//         for(Integer i: taxiroutetoClient){
+//                 taxiRouteString += String.valueOf(i)+ " ";
+//         }
+//         for(Integer i: taxiRouteToShop){
+//                 clientRouteString += String.valueOf(i)+ " ";
+//         }
+
+ 
+//              return  "client " + client +"\n"+ "taxi "+ taxi + "\n"+ taxiRouteString +"\n"+ "shop " + shop + "\n" + clientRouteString;
+        
+//     }
+
+
+//     public static String output(int shops, int clients){
+        
+// ArrayList<Integer[]> S_2_C = new ArrayList<>();//shops to Clients
+// ArrayList<Integer[]> C_2_S= new ArrayList<>();
+
+// for (int i : clients){
+//         S_2_C = ShopToClientDjikstra(shops,clients[0], graph);
+//         C_2_S = ClientToShopDjikstra(clients[0], shops, graph);
+            
+// }
+
+ 
+// S_2_C = ShopToClientDjikstra(shops,clients[0], graph);
+// C_2_S = ClientToShopDjikstra(clients[0], shops, graph);
+
+
+
+
+// ArrayList<Integer[]> leastCostPair = new ArrayList<>();
+
+// leastCostPair = (ArrayList<Integer[]>) findLeastCostPairs(S_2_C, C_2_S);
+// System.out.println(printOutResults(leastCostPair));
+
+
+
+
+//         return "";
+//     }
 }
        
 
